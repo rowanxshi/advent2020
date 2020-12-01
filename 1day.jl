@@ -201,36 +201,39 @@ input = [1046
 sort!(input)
 
 function findsum2(add = 2020)
-	for a in eachindex(input)
-		for b in a:length(input)
-			input[a]+input[b] == add && return println(input[a]*input[b])
-			input[a]+input[b] > add && break
-		end
+	x = Vector{Int}(undef, 2)
+	@inbounds for i1 in eachindex(input)
+		x[1] = input[i1]
+		i2 = searchsortedfirst(input, add - x[1])
+		x[2] = input[i2]
+		sum(x) == add && return prod(x)
 	end
 end
+findsum2()
 
 function findsum3(add = 2020)
-	for a in eachindex(input)
-		for b in a:length(input)
-			for c in b:length(input)
-				input[a]+input[b]+input[c] == add && return println(input[a]*input[b]*input[c])
-				input[a]+input[b]+input[c] > add && break
-			end
+	x = Vector{Int}(undef, 3)
+	@inbounds for i1 in eachindex(input)
+		x[1] = input[i1]
+		for i2 in (i1+1):length(input)
+			x[2] = input[i2]
+			i3 = searchsortedfirst(input, add - sum(x[1:2]))
+			x[3] = input[i3]
+			sum(x) == add && return prod(x)
 		end
 	end
 end
+findsum3()
 
 function findsumN(add = 2020, N = 2)
-	prog = "indices = Vector{Int}(undef, $N)\n"
-	prog = prog*"for i1 in eachindex(input)\nindices[1]=i1"
-	for j in 2:N
-		prog = prog*"\nfor i$j in i$(j-1):length(input)\nindices[$j]=i$j"
+	prog = "i0 = 0\n"
+	prog = prog*"x = Vector{Int}(undef, $N)\n@inbounds "
+	for j in 1:(N-1)
+		prog = prog*"for i$j in (i$(j-1)+1):length(input)\nx[$j] = input[i$j]\n"
 	end
+	prog = prog*"i$N = searchsortedfirst(input, $add - sum(x[1:$(N-1)]))\nx[$N] = input[i$N]\nsum(x) == $add && return prod(x)"
+	prog = prog*"\nend"^(N-1)
 	
-	prog = prog*"\nsum(input[indices]) == $add && return println(prod(input[indices]))\nsum(input[indices]) > $add && break"
-	
-	prog = prog*"\nend"^N
 	include_string(Main, prog)
 end
-findsumN(2020, 2)
-findsumN(2020, 3)
+findsumN(2020, 3) |> print
