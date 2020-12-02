@@ -16,7 +16,7 @@ input = DelimitedFiles.readdlm("2day_clean.txt",',')
 function part1()
 	count_times(string, letter) = length(findall(string, letter))
 	counts = count_times.(input[:,3], input[:, 4])
-	((times .<= input[:,2]) .& (times .>= input[:,1])) |> sum
+	((counts .<= input[:,2]) .& (counts .>= input[:,1])) |> sum
 end
 part1()
 
