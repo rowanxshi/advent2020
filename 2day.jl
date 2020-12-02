@@ -1,3 +1,4 @@
+module vectorized
 input = open("2day.txt") do file
 	read(file, String)
 end
@@ -25,3 +26,28 @@ function part2()
 	xor.(check_match(1), check_match(2)) |> sum
 end
 part2()
+end
+
+module loopdeloop
+function read_in(filepath = "2day.txt")
+	input = readlines(filepath)
+	map(input) do line
+		(i, j, char, pw) = match(r"(\d+)-(\d+) (.): (.+)", line).captures
+		parse.(Int, [i;j]), char, pw
+	end
+end
+
+function part1(input = read_in())
+	count(input) do (num, char, pw)
+		num[1] <= count(char, pw) <= num[2]
+	end
+end
+part1() |> println
+
+function part2(input = read_in())
+	count(input) do (num, char, pw)
+		@views xor(pw[num[1]] == char[1], pw[num[2]] == char[1])
+	end
+end
+part2() |> println
+end
