@@ -32,21 +32,21 @@ module loopdeloop
 function read_in(filepath = "2day.txt")
 	input = readlines(filepath)
 	map(input) do line
-		(i, j, char, pw) = match(r"(\d+)-(\d+) (.): (.+)", line).captures
-		parse.(Int, [i;j]), char, pw
+		(i, j, letter, pw) = match(r"(\d+)-(\d+) (.): (.+)", line).captures
+		parse.(Int, [i;j]), letter, pw
 	end
 end
 
 function part1(input = read_in())
-	count(input) do (num, char, pw)
-		num[1] <= count(char, pw) <= num[2]
+	count(input) do (num, letter, pw)
+		num[1] <= count(letter, pw) <= num[2]
 	end
 end
 part1() |> println
 
 function part2(input = read_in())
-	count(input) do (num, char, pw)
-		@views xor(pw[num[1]] == char[1], pw[num[2]] == char[1])
+	count(input) do (num, letter, pw)
+		xor(pw[num[1]] == letter[1], pw[num[2]] == letter[1])
 	end
 end
 part2() |> println
