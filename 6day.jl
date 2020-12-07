@@ -1,8 +1,5 @@
 function process(filepath)
 	groups = split(read(filepath, String), "\n\n")
-	map(groups) do group
-		replace(group, r"\n$" => "")
-	end
 end
 
 function part1(groups)
@@ -14,7 +11,7 @@ end
 
 function part2(groups)
 	mapreduce(+, groups) do group
-		people = split(group, r"[\n]+")
+		people = split(group, keepempty=false)
 		length(intersect(people...))
 	end
 end
